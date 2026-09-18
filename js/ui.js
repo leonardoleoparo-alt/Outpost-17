@@ -15,6 +15,7 @@ export class GameUI {
       startWaveButton: document.querySelector('#startWaveButton'),
       speedButtons: [...document.querySelectorAll('.speed-button[data-speed]')],
       pauseButton: document.querySelector('#pauseButton'),
+      soundButton: document.querySelector('#soundButton'),
       towerCards: [...document.querySelectorAll('.tower-card[data-tower]')],
       dockTitle: document.querySelector('#dockTitle'),
       dockHint: document.querySelector('#dockHint'),
@@ -61,6 +62,7 @@ export class GameUI {
     this.elements.startWaveButton.addEventListener('click', () => game.primaryAction());
     for (const button of this.elements.speedButtons) button.addEventListener('click', () => game.setGameSpeed(Number(button.dataset.speed)));
     this.elements.pauseButton.addEventListener('click', () => game.togglePause());
+    this.elements.soundButton.addEventListener('click', () => game.toggleSound());
     this.elements.upgradeButton.addEventListener('click', () => game.upgradeSelectedTower());
     this.elements.sellButton.addEventListener('click', () => game.sellSelectedTower());
     this.elements.overlayPrimary.addEventListener('click', () => {
@@ -81,6 +83,7 @@ export class GameUI {
     this.updatePhase(game);
     this.updateInspector(game);
     this.updateSpeed(game);
+    this.updateSound(game);
     this.updateStateOverlay(game);
 
     elements.gameStage.classList.toggle('is-placing', Boolean(game.placementType && game.isInteractive));
@@ -178,6 +181,13 @@ export class GameUI {
     this.elements.pauseButton.disabled = game.isTerminal;
     this.elements.pauseButton.textContent = game.state === GAME_STATES.PAUSED ? 'RESUME' : 'PAUSE';
     this.elements.pauseButton.setAttribute('aria-pressed', String(game.state === GAME_STATES.PAUSED));
+  }
+
+  updateSound(game) {
+    const enabled = game.audio.enabled;
+    this.elements.soundButton.textContent = enabled ? 'SOUND ON' : 'SOUND OFF';
+    this.elements.soundButton.classList.toggle('is-muted', !enabled);
+    this.elements.soundButton.setAttribute('aria-pressed', String(enabled));
   }
 
   updateInspector(game) {

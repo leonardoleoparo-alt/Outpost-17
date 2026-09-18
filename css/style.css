@@ -434,3 +434,28 @@ button:focus-visible { outline: 3px solid #2d65a0; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
   .game-stage.is-final-wave { box-shadow: var(--shadow), 0 0 0 2px rgba(242,196,92,.18); }
 }
+
+/* Audio controls */
+.sim-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.sound-button {
+  min-width: 72px;
+  height: 27px;
+  padding: 0 8px;
+  border: 1px solid #c9d4c2;
+  border-radius: 8px;
+  background: #eaf3e4;
+  color: #356c49;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  cursor: pointer;
+}
+.sound-button:hover { background: #dfeeda; }
+.sound-button.is-muted {
+  background: #f1eee6;
+  color: #7a746a;
+}

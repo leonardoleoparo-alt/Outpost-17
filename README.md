@@ -31,6 +31,7 @@ O objetivo é defender o Outpost durante 20 waves usando quatro torres com upgra
 - `Esc`: pausa/continua.
 - `START WAVE`: inicia a próxima wave antecipadamente.
 - `1x / 2x`: altera a velocidade da simulação.
+- `SOUND ON / OFF`: ativa ou silencia os efeitos sonoros.
 
 ## Executar localmente
 
@@ -63,6 +64,7 @@ O arquivo `.nojekyll` já está incluído.
 - HTML5
 - CSS3
 - JavaScript puro
+- Web Audio API para efeitos sonoros procedurais
 - HTML5 Canvas
 - ES Modules
 - requestAnimationFrame
@@ -78,6 +80,7 @@ README.md
 css/
   style.css
 js/
+  audio.js
   economy.js
   effects.js
   enemies.js
@@ -97,7 +100,6 @@ js/
 ## Limitações atuais
 
 - Desktop only para gameplay.
-- Sem áudio.
 - Sem save persistente.
 - Sem multiplayer.
 - Sem modo infinito.

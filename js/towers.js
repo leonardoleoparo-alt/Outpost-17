@@ -142,7 +142,7 @@ export class Tower {
     this.target = target;
     if (!target) {
       this.cooldown = Math.max(0, this.cooldown);
-      return;
+      return false;
     }
 
     this.angle = Math.atan2(target.y - this.y, target.x - this.x);
@@ -154,7 +154,9 @@ export class Tower {
       // Preserve fractional cooldown overshoot so 1x and 2x remain mechanically equivalent.
       this.cooldown += this.fireInterval;
       if (this.cooldown <= 0) this.cooldown = this.fireInterval;
+      return true;
     }
+    return false;
   }
 
   draw(ctx) {

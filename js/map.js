@@ -64,15 +64,35 @@ export class Outpost {
     ctx.strokeStyle = '#9e4d3d';
     ctx.stroke();
 
-    ctx.fillStyle = '#fff8df';
-    ctx.font = '900 19px system-ui';
+    const hpRatio = Math.max(0, Math.min(1, this.hp / this.maxHp));
+    const barWidth = 148;
+    const barHeight = 24;
+    const barX = -barWidth / 2;
+    const barY = -122;
+
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('17', 0, -58);
-
-    ctx.fillStyle = '#224b3a';
+    ctx.fillStyle = '#244b3b';
     ctx.font = '900 17px system-ui';
-    ctx.fillText('OUTPOST', 0, 71);
+    ctx.fillText('OUTPOST 17', 0, barY - 14);
+
+    ctx.fillStyle = 'rgba(255,250,240,.96)';
+    drawRoundedRect(ctx, barX, barY, barWidth, barHeight, 8);
+    ctx.fill();
+    ctx.lineWidth = this.hitFlash > 0 ? 4 : 3;
+    ctx.strokeStyle = this.hitFlash > 0 ? '#d75d52' : '#557262';
+    ctx.stroke();
+
+    const fillWidth = (barWidth - 6) * hpRatio;
+    if (fillWidth > 0) {
+      ctx.fillStyle = hpRatio > .6 ? '#4d9d5d' : hpRatio > .3 ? '#e1a348' : '#d75d52';
+      drawRoundedRect(ctx, barX + 3, barY + 3, fillWidth, barHeight - 6, 5);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = '#173d30';
+    ctx.font = '900 13px system-ui';
+    ctx.fillText(`HP ${Math.ceil(this.hp)} / ${this.maxHp}`, 0, barY + barHeight / 2 + .5);
 
     ctx.restore();
   }

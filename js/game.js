@@ -1,3 +1,4 @@
+import { AudioManager } from './audio.js';
 import { Economy } from './economy.js';
 import { Effects } from './effects.js';
 import { ForestMap } from './map.js';
@@ -33,6 +34,7 @@ export class Game {
     this.ui = ui;
     this.map = new ForestMap(canvas.width, canvas.height);
     this.economy = new Economy(STARTING_MONEY);
+    this.audio = new AudioManager();
     this.effects = new Effects();
     this.input = new InputController(canvas);
     this.wave = new WaveController(this.map.path);
@@ -106,6 +108,7 @@ export class Game {
       enemy.update(dt);
       if (wasAlive && enemy.reachedEnd) {
         this.map.outpost.damage(enemy.baseDamage);
+        this.audio.baseHit();
         this.effects.burst(this.map.outpost.x - 50, this.map.outpost.y, '#dc6d5a', 11);
         this.ui.toast(`OUTPOST HIT · -${enemy.baseDamage} HP`, 'danger');
         if (this.map.outpost.hp <= 0) {
@@ -116,11 +119,14 @@ export class Game {
     }
 
     updateRevealState(this.enemies, this.towers);
-    for (const tower of this.towers) tower.update(dt, this.enemies, this.projectiles);
+    for (const tower of this.towers) {
+      if (tower.update(dt, this.enemies, this.projectiles)) this.audio.towerShot(tower.type);
+    }
 
     for (const projectile of this.projectiles) {
       const result = projectile.update(dt);
       if (!result?.hit) continue;
+      this.audio.impact(result.killed);
       this.effects.burst(result.x, result.y, '#f6d26c', result.killed ? 9 : 4);
       if (result.killed) {
         this.stats.kills += 1;
@@ -140,6 +146,7 @@ export class Game {
     if (!cleared) return;
 
     this.economy.earn(cleared.clearBonus);
+    this.audio.waveClear();
     this.ui.toast(`WAVE ${cleared.number} CLEARED · +$${cleared.clearBonus}`, 'money');
     this.preparationRemaining = PREPARATION_SECONDS;
 
@@ -176,6 +183,7 @@ export class Game {
       return true;
     }
     if (!this.economy.canAfford(definition.cost)) {
+      this.audio.error();
       this.ui.toast('NOT ENOUGH MONEY', 'danger');
       return false;
     }
@@ -221,10 +229,12 @@ export class Game {
     if (!definition) return false;
     const validation = validatePlacement(type, x, y, this.map, this.towers);
     if (!validation.valid) {
+      this.audio.error();
       this.ui.toast(validation.reason, 'danger');
       return false;
     }
     if (!this.economy.spend(definition.cost)) {
+      this.audio.error();
       this.ui.toast('NOT ENOUGH MONEY', 'danger');
       this.cancelPlacement();
       return false;
@@ -234,6 +244,7 @@ export class Game {
     this.towers.push(tower);
     this.stats.towersBuilt += 1;
     this.selectedTower = tower;
+    this.audio.placement();
     this.effects.burst(x, y, '#eff0b4', 12);
     this.ui.toast(`${definition.name.toUpperCase()} DEPLOYED · -$${definition.cost}`);
 
@@ -248,11 +259,13 @@ export class Game {
     const cost = tower.nextUpgradeCost;
     const unlock = tower.nextStats?.unlock ?? null;
     if (!this.economy.spend(cost)) {
+      this.audio.error();
       this.ui.toast('NOT ENOUGH MONEY FOR UPGRADE', 'danger');
       return false;
     }
     tower.upgrade();
     this.stats.upgrades += 1;
+    this.audio.upgrade();
     this.effects.burst(tower.x, tower.y, '#dcefa8', 16);
     this.ui.toast(`${tower.definition.name.toUpperCase()} · LEVEL ${tower.level}`, 'money');
     if (unlock) this.ui.toast(`NEW ABILITY · ${unlock}`, unlock.includes('AIR') ? 'air' : 'money');
@@ -273,6 +286,7 @@ export class Game {
     this.towers.splice(index, 1);
     this.economy.refund(refund);
     this.stats.towersSold += 1;
+    this.audio.sell();
     this.effects.burst(tower.x, tower.y, '#d8d0a9', 10);
     this.ui.toast(`${tower.definition.name.toUpperCase()} SOLD · +$${refund}`, 'money');
     this.selectedTower = null;
@@ -298,6 +312,8 @@ export class Game {
     this.stats.waveReached = Math.max(this.stats.waveReached, config.number);
     this.preparationRemaining = PREPARATION_SECONDS;
 
+    this.audio.waveStart(config.number === 20);
+
     if (config.number === 20) {
       this.ui.toast('FINAL WAVE · FINAL ASSAULT', 'final');
     } else {
@@ -319,6 +335,7 @@ export class Game {
     if (!this.isInteractive || !GAME_SPEEDS.includes(speed)) return false;
     if (this.gameSpeed === speed) return true;
     this.gameSpeed = speed;
+    this.audio.speed();
     this.ui.toast(`SIMULATION SPEED · ${speed}x`, 'speed');
     return true;
   }
@@ -328,12 +345,20 @@ export class Game {
     if (this.state === GAME_STATES.PAUSED) {
       this.state = this.pausedFrom ?? GAME_STATES.PREPARATION;
       this.pausedFrom = null;
+      this.audio.pause(false);
       return true;
     }
     if (!this.isInteractive) return false;
     this.pausedFrom = this.state;
     this.state = GAME_STATES.PAUSED;
+    this.audio.pause(true);
     return true;
+  }
+
+  toggleSound() {
+    const enabled = this.audio.toggle();
+    this.ui.toast(enabled ? 'SOUND ON' : 'SOUND OFF', 'speed');
+    return enabled;
   }
 
   primaryAction() {
@@ -351,6 +376,7 @@ export class Game {
     this.pausedFrom = null;
     this.cancelPlacement();
     this.selectedTower = null;
+    this.audio.victory();
     this.ui.toast('OUTPOST 17 SECURED · 20 WAVES SURVIVED', 'victory');
     return true;
   }
@@ -362,6 +388,7 @@ export class Game {
     this.pausedFrom = null;
     this.cancelPlacement();
     this.selectedTower = null;
+    this.audio.gameOver();
     this.ui.toast('OUTPOST LOST', 'danger');
     return true;
   }
