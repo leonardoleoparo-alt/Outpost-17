@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2f6b45">
+  <meta name="description" content="OUTPOST 17 — tower defense clássico de navegador em uma floresta estilizada.">
+  <title>OUTPOST 17 — Tower Defense</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="desktop-game" aria-label="OUTPOST 17">
+      <header class="topbar">
+        <div class="brand-block" aria-label="OUTPOST 17">
+          <span class="brand-mark" aria-hidden="true">17</span>
+          <div>
+            <strong>OUTPOST 17</strong>
+            <small>FOREST DEFENSE</small>
+          </div>
+        </div>
+
+        <div class="hud-group" aria-label="Status da partida">
+          <div class="hud-stat">
+            <span>BASE</span>
+            <strong id="baseText">100 / 100</strong>
+          </div>
+          <div class="hud-stat">
+            <span>WAVE</span>
+            <strong id="waveText">0 / 20</strong>
+          </div>
+          <div class="hud-stat hud-stat--money">
+            <span>MONEY</span>
+            <strong id="moneyText">$800</strong>
+          </div>
+        </div>
+
+        <div class="phase-panel">
+          <div>
+            <span class="phase-label" id="phaseLabel">PREPARATION</span>
+            <small id="phaseHint">Prepare defenses for Wave 1.</small>
+          </div>
+          <div class="speed-control" aria-label="Simulation speed">
+            <span>SPEED</span>
+            <div>
+              <button class="speed-button is-active" data-speed="1" type="button" aria-pressed="true">1x</button>
+              <button class="speed-button" data-speed="2" type="button" aria-pressed="false">2x</button>
+            </div>
+            <button class="pause-button" id="pauseButton" type="button" aria-pressed="false">PAUSE</button>
+          </div>
+          <button class="primary-button" id="startWaveButton" type="button">START WAVE 1</button>
+        </div>
+      </header>
+
+      <section class="game-stage" id="gameStage">
+        <canvas id="gameCanvas" width="1600" height="760" aria-label="Mapa do OUTPOST 17"></canvas>
+
+        <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
+
+        <div class="map-legend" aria-hidden="true">
+          <span><i class="legend-dot legend-dot--entry"></i>ENTRY</span>
+          <span><i class="legend-dot legend-dot--outpost"></i>OUTPOST</span>
+        </div>
+
+        <aside class="tower-inspector" id="towerInspector" aria-hidden="true" aria-label="Selected tower information">
+          <div class="inspector-head">
+            <div>
+              <span>SELECTED DEFENSE</span>
+              <strong id="inspectorName">RANGER</strong>
+            </div>
+            <b id="inspectorLevel">LEVEL 1</b>
+          </div>
+
+          <div class="inspector-stats">
+            <div><span>DAMAGE</span><strong id="inspectorDamage">18</strong></div>
+            <div><span>RANGE</span><strong id="inspectorRange">180</strong></div>
+            <div><span>FIRE RATE</span><strong id="inspectorRate">0.72s</strong></div>
+          </div>
+
+          <div class="inspector-targets" aria-label="Tower targets">
+            <span>Ground <b id="targetGround">✓</b></span>
+            <span>Flying <b id="targetFlying">✕</b></span>
+            <span>Invisible <b id="targetInvisible">✕</b></span>
+          </div>
+
+          <div class="inspector-support" id="inspectorSupport" hidden></div>
+
+          <div class="upgrade-preview" id="upgradePreview">
+            <span class="upgrade-kicker">NEXT UPGRADE</span>
+            <div class="upgrade-row"><span>Damage</span><strong id="upgradeDamage">18 → 27</strong></div>
+            <div class="upgrade-row"><span>Range</span><strong id="upgradeRange">180 → 198</strong></div>
+            <div class="upgrade-row"><span>Fire Rate</span><strong id="upgradeRate">0.72s → 0.62s</strong></div>
+            <div class="upgrade-ability" id="upgradeAbility" hidden>
+              <span>NEW ABILITY</span>
+              <strong id="upgradeAbilityName">ANTI-AIR</strong>
+            </div>
+          </div>
+
+          <div class="inspector-actions">
+            <button class="upgrade-button" id="upgradeButton" type="button">UPGRADE $225</button>
+            <button class="sell-button" id="sellButton" type="button">SELL +$175</button>
+          </div>
+          <small class="invested-text" id="investedText">Invested $250 · refund 70%</small>
+        </aside>
+
+        <div class="stage-note">
+          <strong>20-WAVE CAMPAIGN</strong>
+          <span>Ground · Flying · Invisible · Cloaked Air · 1x / 2x</span>
+        </div>
+
+        <section class="state-overlay" id="stateOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
+          <div class="state-card">
+            <span class="state-kicker" id="overlayKicker">SIMULATION 0x</span>
+            <h2 id="overlayTitle">PAUSED</h2>
+            <p id="overlaySubtitle">Resume when ready.</p>
+
+            <div class="result-stats" id="overlayStats" hidden>
+              <div><span>WAVES</span><strong id="resultWave">0 / 20</strong></div>
+              <div><span>KILLS</span><strong id="resultKills">0</strong></div>
+              <div><span>OUTPOST HP</span><strong id="resultHp">100 / 100</strong></div>
+              <div><span>MONEY EARNED</span><strong id="resultEarned">$0</strong></div>
+              <div><span>MONEY SPENT</span><strong id="resultSpent">$0</strong></div>
+              <div><span>TOWERS BUILT</span><strong id="resultTowers">0</strong></div>
+              <div><span>UPGRADES</span><strong id="resultUpgrades">0</strong></div>
+            </div>
+
+            <div class="state-actions">
+              <button class="state-primary" id="overlayPrimary" type="button">CONTINUE</button>
+              <button class="state-secondary" id="overlaySecondary" type="button">RESTART RUN</button>
+            </div>
+            <small class="state-help">ESC pauses/resumes during gameplay.</small>
+          </div>
+        </section>
+      </section>
+
+      <footer class="tower-dock" aria-label="Tower selection">
+        <div class="dock-copy">
+          <span class="dock-kicker">DEFENSE DEPLOYMENT</span>
+          <strong id="dockTitle">Select a tower</strong>
+          <small id="dockHint">Choose a defense, then place it on a valid grass area. Right click cancels · ESC pauses.</small>
+        </div>
+
+        <button class="tower-card" id="rangerCard" data-tower="ranger" type="button" aria-pressed="false">
+          <span class="tower-icon tower-icon--ranger" aria-hidden="true"><i></i></span>
+          <span class="tower-card__copy">
+            <strong>RANGER</strong>
+            <small>Balanced defense</small>
+            <span class="target-chip">GROUND ✓</span>
+          </span>
+          <span class="tower-price">$250</span>
+        </button>
+
+        <button class="tower-card" id="marksmanCard" data-tower="marksman" type="button" aria-pressed="false">
+          <span class="tower-icon tower-icon--marksman" aria-hidden="true"><i></i></span>
+          <span class="tower-card__copy">
+            <strong>MARKSMAN</strong>
+            <small>Long-range heavy hit</small>
+            <span class="target-chip">GROUND ✓</span>
+          </span>
+          <span class="tower-price">$525</span>
+        </button>
+
+        <button class="tower-card" id="airDefenseCard" data-tower="airDefense" type="button" aria-pressed="false">
+          <span class="tower-icon tower-icon--air" aria-hidden="true"><i></i></span>
+          <span class="tower-card__copy">
+            <strong>AIR DEFENSE</strong>
+            <small>Anti-Air specialist</small>
+            <span class="target-chip target-chip--air">FLYING ✓</span>
+          </span>
+          <span class="tower-price">$425</span>
+        </button>
+
+        <button class="tower-card" id="scoutCard" data-tower="scout" type="button" aria-pressed="false">
+          <span class="tower-icon tower-icon--scout" aria-hidden="true"><i></i></span>
+          <span class="tower-card__copy">
+            <strong>SCOUT</strong>
+            <small>Detection support</small>
+            <span class="target-chip target-chip--detect">DETECTION ✓</span>
+          </span>
+          <span class="tower-price">$325</span>
+        </button>
+      </footer>
+    </section>
+
+    <section class="mobile-message">
+      <div class="mobile-card">
+        <span class="brand-mark" aria-hidden="true">17</span>
+        <h1>OUTPOST 17</h1>
+        <p>OUTPOST 17 is designed for desktop play.</p>
+        <small>Use a desktop browser with a mouse for the current build.</small>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
