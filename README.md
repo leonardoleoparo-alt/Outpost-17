@@ -1,19 +1,34 @@
 # OUTPOST 17
 
-OUTPOST 17 é um Tower Defense de navegador feito com HTML5, CSS3, JavaScript puro e Canvas.
+OUTPOST 17 is a browser tower-defense game built with **HTML5 Canvas, CSS and vanilla JavaScript**.
 
-## Jogar
+Defend the Outpost through a 20-wave campaign by placing and upgrading four complementary tower types. Enemy properties are combined through generic Ground, Flying and Invisible targeting rules, including Detection and Reveal support.
 
-O objetivo é defender o Outpost durante 20 waves usando quatro torres com upgrades, venda, targeting, Detection e Reveal.
+## Play
 
-### Torres
+Open the published GitHub Pages URL and press **PLAY**.
 
-- Ranger — defesa generalista.
-- Marksman — alto dano e grande alcance.
-- Air Defense — especializada contra unidades aéreas.
-- Scout — Detection e Reveal.
+Desktop controls:
 
-### Inimigos
+- **Mouse:** select, place and inspect towers
+- **Right click:** cancel tower placement
+- **ESC:** pause/resume
+- **1x / 2x:** simulation speed
+
+The current gameplay build is desktop-only. Mobile devices receive a lightweight desktop-play notice instead of starting the simulation.
+
+## Towers
+
+- **Ranger:** flexible generalist
+- **Marksman:** long-range, high single-target damage
+- **Air Defense:** specialized anti-air damage
+- **Scout:** Detection and Reveal support
+
+Each tower has four upgrade levels and can be sold for 70% of its total investment.
+
+## Campaign
+
+The campaign contains **20 waves** using six enemy variants built from the same generic targeting model:
 
 - Grunt
 - Runner
@@ -22,84 +37,67 @@ O objetivo é defender o Outpost durante 20 waves usando quatro torres com upgra
 - Shade
 - Phantom
 
-## Controles
+The final waves combine Ground, Flying, Invisible and Flying + Invisible threats without adding a boss or a separate combat system.
 
-- Mouse: interação principal.
-- Clique em uma torre da loja: seleciona para construção.
-- Clique no mapa: posiciona ou seleciona uma torre.
-- Clique direito: cancela o placement.
-- `Esc`: pausa/continua.
-- `START WAVE`: inicia a próxima wave antecipadamente.
-- `1x / 2x`: altera a velocidade da simulação.
-- `SOUND ON / OFF`: ativa ou silencia os efeitos sonoros.
+## Audio and settings
 
-## Executar localmente
+Audio is generated procedurally with the Web Audio API; no external audio files are required.
 
-Como o projeto usa ES Modules, execute por um servidor local:
+Session settings include:
+
+- Master Volume
+- SFX Volume
+- Reduced Motion
+- Damage Numbers
+
+These settings are **not persisted**. Reloading or reopening the page restores the defaults.
+
+## Production structure
+
+```text
+index.html
+app.js
+favicon.svg
+social-card.png
+.nojekyll
+src/
+```
+
+`app.js` is the single production bundle loaded by the page, reducing the JavaScript request chain. The readable modular source remains in `src/` for code review and portfolio purposes.
+
+## Run locally
+
+From the project folder:
 
 ```bash
 py -m http.server 8000
 ```
 
-Depois acesse:
+Then open:
 
 ```text
 http://localhost:8000
 ```
 
-Também funciona com Live Server no VS Code.
-
 ## GitHub Pages
 
-O projeto é totalmente estático e pode ser publicado diretamente pelo GitHub Pages.
+The repository is ready for GitHub Pages. In **Settings → Pages**, publish the `main` branch from `/ (root)`.
 
-No repositório, use:
+The included `.nojekyll` file keeps the deployment as a plain static site.
 
-`Settings → Pages → Deploy from a branch → main → / (root)`
+## Current scope
 
-O arquivo `.nojekyll` já está incluído.
+Implemented:
 
-## Tecnologias
+- 20-wave campaign
+- four tower types with four levels each
+- tower placement, selection, upgrades and selling
+- Ground / Flying / Invisible targeting
+- Detection and Reveal
+- 1x / 2x simulation
+- pause, restart, Victory and Game Over
+- procedural sound effects
+- session-only accessibility/audio settings
+- desktop responsive layouts
 
-- HTML5
-- CSS3
-- JavaScript puro
-- Web Audio API para efeitos sonoros procedurais
-- HTML5 Canvas
-- ES Modules
-- requestAnimationFrame
-
-Sem frameworks, npm, backend ou banco de dados.
-
-## Estrutura
-
-```text
-index.html
-.nojekyll
-README.md
-css/
-  style.css
-js/
-  audio.js
-  economy.js
-  effects.js
-  enemies.js
-  game.js
-  input.js
-  main.js
-  map.js
-  path.js
-  projectile.js
-  targeting.js
-  towers.js
-  ui.js
-  utils.js
-  waves.js
-```
-
-## Limitações atuais
-
-- Desktop only para gameplay.
-- Sem save persistente.
-- Sem multiplayer.
-- Sem modo infinito.
+Not implemented: save/progression, multiplayer, multiple maps, bosses, endless mode, touch gameplay or external audio assets.
