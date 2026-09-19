@@ -1,103 +1,77 @@
-# OUTPOST 17
+# 🌲 OUTPOST 17
 
-OUTPOST 17 is a browser tower-defense game built with **HTML5 Canvas, CSS and vanilla JavaScript**.
+**OUTPOST 17** é um jogo **Tower Defense para navegador** desenvolvido com HTML, CSS e JavaScript puro.
 
-Defend the Outpost through a 20-wave campaign by placing and upgrading four complementary tower types. Enemy properties are combined through generic Ground, Flying and Invisible targeting rules, including Detection and Reveal support.
+O objetivo é defender o Outpost durante uma campanha de **20 waves**, posicionando torres, fazendo upgrades e escolhendo a melhor defesa para cada tipo de inimigo.
 
-## Play
+## 🎮 Gameplay
 
-Open the published GitHub Pages URL and press **PLAY**.
+Os inimigos percorrem uma rota até o Outpost. Cada inimigo que chega ao final causa dano à base.
 
-Desktop controls:
+Durante a partida, o jogador precisa:
 
-- **Mouse:** select, place and inspect towers
-- **Right click:** cancel tower placement
-- **ESC:** pause/resume
-- **1x / 2x:** simulation speed
+- 🏗️ posicionar torres pelo mapa;
+- ⬆️ melhorar torres até o Level 4;
+- 💰 administrar o dinheiro recebido nas waves;
+- 🎯 combinar diferentes tipos de defesa;
+- 👁️ lidar com inimigos Ground, Flying e Invisible;
+- 🏁 sobreviver às 20 waves para proteger o Outpost.
 
-The current gameplay build is desktop-only. Mobile devices receive a lightweight desktop-play notice instead of starting the simulation.
+## 🛡️ Torres
 
-## Towers
+- **Ranger** — defesa versátil e equilibrada.
+- **Marksman** — alto dano e grande alcance.
+- **Air Defense** — especializada contra inimigos voadores.
+- **Scout** — Detection e Reveal para inimigos invisíveis.
 
-- **Ranger:** flexible generalist
-- **Marksman:** long-range, high single-target damage
-- **Air Defense:** specialized anti-air damage
-- **Scout:** Detection and Reveal support
+Todas as torres possuem **4 níveis de upgrade** e podem ser vendidas durante a partida.
 
-Each tower has four upgrade levels and can be sold for 70% of its total investment.
+## 🕹️ Controles
 
-## Campaign
+- **Mouse** — selecionar, posicionar e inspecionar torres.
+- **Botão direito** — cancelar o posicionamento.
+- **ESC** — pausar ou continuar.
+- **1x / 2x** — alterar a velocidade da partida.
 
-The campaign contains **20 waves** using six enemy variants built from the same generic targeting model:
+> 💻 O gameplay foi desenvolvido para **desktop**.
 
-- Grunt
-- Runner
-- Brute
-- Glider
-- Shade
-- Phantom
+## ⚙️ Tecnologias
 
-The final waves combine Ground, Flying, Invisible and Flying + Invisible threats without adding a boss or a separate combat system.
+- HTML5
+- CSS3
+- JavaScript puro
+- HTML5 Canvas
+- Web Audio API
+- GitHub Pages
 
-## Audio and settings
+O projeto não utiliza frameworks, backend ou banco de dados.
 
-Audio is generated procedurally with the Web Audio API; no external audio files are required.
+## 🔊 Áudio e configurações
 
-Session settings include:
+O jogo possui efeitos sonoros gerados diretamente pelo navegador.
 
-- Master Volume
-- SFX Volume
-- Reduced Motion
-- Damage Numbers
+As configurações de volume, efeitos visuais e damage numbers funcionam apenas durante a sessão atual. Ao recarregar a página, elas voltam ao padrão.
 
-These settings are **not persisted**. Reloading or reopening the page restores the defaults.
+## 🚀 Executar localmente
 
-## Production structure
-
-```text
-index.html
-app.js
-favicon.svg
-social-card.png
-.nojekyll
-src/
-```
-
-`app.js` is the single production bundle loaded by the page, reducing the JavaScript request chain. The readable modular source remains in `src/` for code review and portfolio purposes.
-
-## Run locally
-
-From the project folder:
+Na pasta do projeto, execute:
 
 ```bash
 py -m http.server 8000
 ```
 
-Then open:
+Depois abra:
 
 ```text
 http://localhost:8000
 ```
 
-## GitHub Pages
+## 🌐 Publicação
 
-The repository is ready for GitHub Pages. In **Settings → Pages**, publish the `main` branch from `/ (root)`.
+O projeto está pronto para ser hospedado gratuitamente com **GitHub Pages**.
 
-The included `.nojekyll` file keeps the deployment as a plain static site.
+Em **Settings → Pages**, publique a branch `main` usando `/ (root)`.
 
-## Current scope
+---
 
-Implemented:
-
-- 20-wave campaign
-- four tower types with four levels each
-- tower placement, selection, upgrades and selling
-- Ground / Flying / Invisible targeting
-- Detection and Reveal
-- 1x / 2x simulation
-- pause, restart, Victory and Game Over
-- procedural sound effects
-- session-only accessibility/audio settings
-- desktop responsive layouts
-
-Not implemented: save/progression, multiplayer, multiple maps, bosses, endless mode, touch gameplay or external audio assets.
+🎯 **OUTPOST 17 foi criado como um projeto de portfólio para demonstrar lógica de gameplay, organização de código, Canvas, gerenciamento de estado, targeting, economia, upgrades e performance em JavaScript.**
